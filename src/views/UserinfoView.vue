@@ -59,7 +59,7 @@ const getUsers = (search = searchQuery.value) => {
             loading.value = false
         })
 }
-const  handleCurrentChange = (val) => {
+const handleCurrentChange = (val) => {
     page.value = val
     getUsers()
 }

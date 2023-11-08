@@ -1,35 +1,25 @@
 <template>
-    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-      <el-tab-pane label="Home" name="first">
-        <HomeView />
-      </el-tab-pane>
-      <el-tab-pane label="About" name="second">
-        <AboutView />
-      </el-tab-pane>
-      <el-tab-pane label="UserInfo" name="third">
-        <UserinfoView />
-      </el-tab-pane>
-    </el-tabs>
-  </template>
+  <el-tabs v-model="activeTab" class="demo-tabs">
+      <el-tab-pane label="Home" name="home"/>
+      <el-tab-pane label="About" name="about"/>
+      <el-tab-pane label="UserInfo" name="userinfo"/>
+      <el-tab-pane label="Product" name="product"/>
+  </el-tabs>
+  <router-view/>
+</template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import type { TabsPaneContext } from 'element-plus'
-import AboutView from './views/AboutView.vue';
-import HomeView from './views/HomeView.vue';
-import UserinfoView  from './views/UserinfoView.vue';
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
-const activeName = ref('first')
+const router = useRouter();
+const activeTab = ref('home');
 
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
-}
+const updateRoute = (tabName: string) => {
+  router.push({ name: tabName });
+};
+
+watch(activeTab, (newTab) => {
+  updateRoute(newTab);
+});
 </script>
-<style>
-.demo-tabs > .el-tabs__content {
-  padding: 32px;
-  color: #6b778c;
-  font-size: 32px;
-  font-weight: 600;
-}
-</style>
