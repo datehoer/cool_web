@@ -1,0 +1,49 @@
+{
+  "name": "cool_web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@types/node": "^20.9.0",
+    "@vitejs/plugin-vue": "^4.4.0",
+    "axios": "^1.6.0",
+    "core-js": "^3.8.3",
+    "element-plus": "^2.4.2",
+    "lightningcss": "^1.22.1",
+    "lodash": "^4.17.21",
+    "vite": "^4.5.0",
+    "vue": "^3.2.13",
+    "vue-class-component": "^8.0.0-0",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.201",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "@vue/eslint-config-standard": "^6.1.0",
+    "@vue/eslint-config-typescript": "^9.1.0",
+    "@vueuse/core": "^10.5.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-define-config": "^1.24.1",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-vue": "^9.18.1",
+    "less": "^4.0.0",
+    "less-loader": "^8.0.0",
+    "typescript": "~4.5.5"
+  }
+}
