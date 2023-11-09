@@ -59,7 +59,7 @@ const getUsers = (search = searchQuery.value) => {
             loading.value = false
         })
 }
-const handleCurrentChange = (val) => {
+const handleCurrentChange = (val: number) => {
     page.value = val
     getUsers()
 }
@@ -68,13 +68,11 @@ const handleSearch = () => {
     getUsers(searchQuery.value)
 }
 const debouncedHandleSearch = _.debounce(handleSearch, 500)
-const handleEdit = (row) => {
-    // 这里可以打开一个对话框或者使用路由导航到编辑页面，传递所选用户的信息
+const handleEdit = (row: any) => {
     console.log('编辑用户', row.uid);
 };
 
-const handleDelete = (row) => {
-    // 这里可以弹出确认对话框，然后执行删除操作，通常需要发送请求到服务器
+const handleDelete = (row: any) => {
     console.log('删除用户', row.uid);
 };
 onMounted(() => {
