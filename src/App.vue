@@ -4,6 +4,7 @@
       <el-tab-pane label="About" name="about"/>
       <el-tab-pane label="UserInfo" name="userinfo"/>
       <el-tab-pane label="Product" name="product"/>
+      <el-tab-pane label="Task" name="task"/>
   </el-tabs>
   <router-view/>
 </template>

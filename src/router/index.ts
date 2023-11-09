@@ -5,6 +5,8 @@ import ProductView from '../views/ProductView.vue';
 import Brands from '../views/BrandsView.vue';
 import Category from '../views/CategoryView.vue';
 import Msg from '../views/MsgView.vue';
+import Task from '../views/TaskView.vue';
+import TaskResult from '../views/TaskResultView.vue';
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
@@ -62,6 +64,22 @@ const routes: Array<RouteRecordRaw> = [
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: Msg
+    },
+    {
+        path: '/task',
+        name: 'task',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: Task
+    },
+    {
+        path: '/taskResult/:taskId',
+        name: 'taskResult',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: TaskResult
     }
 
 ]
