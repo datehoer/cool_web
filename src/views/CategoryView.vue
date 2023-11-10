@@ -7,11 +7,16 @@
                     <img referrer="no-referrer|origin|unsafe-url" referrerPolicy="no-referrer" :src="scope.row.logo" alt="User Image" style="width: 50px; height: 50px;"/>
                 </template>
             </el-table-column>
-            <el-table-column prop="title" label="title" width="380" />
-            <el-table-column prop="starAverageScore" label="starAverageScore" width="380" />
+            <el-table-column prop="title" label="商品名称" width="380" />
+            <el-table-column prop="starAverageScore" label="打分" width="380" />
+            <el-table-column label="消息数量" width="180" header-align="center" align="center">
+                <template #default="scope">
+                    {{ scope.row.msgCount }}
+                </template>
+            </el-table-column>
             <el-table-column label="操作" width="380">
                 <template #default="scope">
-                    <el-button size="small" @click="goToMsg(scope.row.id)">进入</el-button>
+                    <el-button size="small" :disabled="scope.row.msgCount === 0" @click="goToMsg(scope.row.id)">进入</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -52,8 +57,19 @@ const fetchCategory = async () => {
                 typeId: productId
             }
         }); // 使用您的 API 路径
-        brands.value = response.data.records; // 假设响应结构是 { data: { records: [], ... } }
+        brands.value = response.data.records;
         total.value = response.data.total;
+
+        // 获取 ID 数组
+        const ids = brands.value.map((brand: any) => brand.id);
+
+        // 构造自定义查询字符串
+        const query = ids.map(id => `ids=${encodeURIComponent(id)}`).join('&');
+        const msgCounts = await request.get(`/msg-count?${query}`)
+        const msgCountsData = msgCounts.data;
+        brands.value.forEach((brand: any) => {
+            brand.msgCount = msgCountsData[brand.id] || 0;
+        });
     } catch (error) {
         console.error(error);
     } finally {

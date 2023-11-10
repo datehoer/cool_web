@@ -9,6 +9,7 @@
             <el-table-column label="操作" width="380">
                 <template #default="scope">
                     <el-button size="small" @click="goToTaskResult(scope.row.id)">进入</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(scope.row.idAsString)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -34,8 +35,14 @@
                 <el-input v-model="form.keyword" type="textarea" placeholder="请输入关键词" />
             </el-form-item>
             <el-form-item label="商品名称" prop="productName">
-                <el-input v-model="form.productName" type="textarea" placeholder="请输入关注的商品名称" />
+                <el-autocomplete
+                    v-model="form.productName"
+                    :fetch-suggestions="fetchCategories"
+                    placeholder="请输入关注的商品名称"
+                    @select="handleSelect"
+                />
             </el-form-item>
+
             <el-form-item label="延迟时间" prop="productDelay">
                 <el-input v-model="form.productDelay" type="textarea" placeholder="请输入延迟时间" />
             </el-form-item>
@@ -57,6 +64,7 @@ import { onMounted, ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import request from '@/utils/request';
 import { FormInstance, FormRules } from '_element-plus@2.4.2@element-plus';
+import debounce from 'lodash/debounce';
 const router = useRouter();
 const task = ref<any>([]);
 const loading = ref(false);
@@ -64,6 +72,7 @@ const pageSize = ref(10);
 const total = ref(0);
 const page = ref(1);
 const dialogVisible = ref(false)
+const searchResults = ref<any>([]);
 const form = reactive({
     keyword: '',
     productId: '',
@@ -104,21 +113,64 @@ const fetchProduct = async () => {
 };
 const save = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
-    await formEl.validate((valid, fields) => {
+    await formEl.validate(async (valid, fields) => {
         if (valid) {
-            console.log('submit!',form)
+            form.insertTime = new Date().toISOString();
+            try{
+                const res = await request.post("/task_info", form)
+                console.log(res);
+            }catch(e){
+                console.log(e);
+            }finally{
+                dialogVisible.value = false
+                fetchProduct();
+            }
         } else {
             console.log('error submit!', fields)
         }
     })
 }
+const fetchCategories = debounce(async (queryString: string, callback: Function) => {
+    // 原有的 fetchCategories 逻辑
+    if (queryString) {
+        try {
+            const response = await request.get('/category-name', {
+                params: { name: queryString }
+            });
+            const formattedData = Object.entries(response.data).map(([name, productId]) => {
+                return { value: name, productId: productId };
+            });
+            searchResults.value = formattedData;
+            callback(searchResults.value);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+}, 500);
+const deleteTask = async (id: number) => {
+    try {
+        const response = await request.delete(`/task_info?id=${id}`);
+        console.log(response);
+    } catch (error) {
+        console.error(error);
+    } finally {
+        fetchProduct();
+    }
+};
 onMounted(() => {
     fetchProduct();
 });
+const handleSelect = (item: any) => {
+    form.productId = item.productId;
+};
 const handleCurrentChange = (val: number) => {
     page.value = val
     fetchProduct()
 }
+const handleDelete = (row: any) => {
+    console.log('删除任务', row);
+    deleteTask(row);
+};
 const goToTaskResult = (id: number) => {
     router.push({ name: 'taskResult', params: { taskId: id } });
 }
