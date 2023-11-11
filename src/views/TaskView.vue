@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="table-container">
         <el-button type="primary" @click="dialogVisible = true">任务下发</el-button>
         <el-table v-loading="loading" :data="task" stripe style="width: 100%">
             <el-table-column prop="id" label="Id"  width="200" />
@@ -13,13 +13,15 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination
+        <div class="pagination-container">
+            <el-pagination
             :page-size="pageSize"
             :pager-count=9
             layout="prev, pager, next"
             :total=total
             @current-change="handleCurrentChange"
         />
+        </div>
         <el-dialog
             v-model="dialogVisible"
             title="新建任务"
@@ -63,7 +65,7 @@
 import { onMounted, ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import request from '@/utils/request';
-import { FormInstance, FormRules } from '_element-plus@2.4.2@element-plus';
+import { FormInstance, FormRules } from 'element-plus';
 import debounce from 'lodash/debounce';
 const router = useRouter();
 const task = ref<any>([]);
@@ -175,3 +177,16 @@ const goToTaskResult = (id: number) => {
     router.push({ name: 'taskResult', params: { taskId: id } });
 }
 </script>
+<style scoped>
+.table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+</style>

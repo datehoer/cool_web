@@ -1,5 +1,5 @@
 <template>
-    <div class="taskResult">
+    <div class="table-container">
         <el-table v-loading="loading" :data="taskResult" stripe style="width: 100%">
             <el-table-column prop="id" label="Id"  width="200" />
             <el-table-column prop="productName" label="监控商品名称"  width="200" />
@@ -20,14 +20,22 @@
                     {{ formatTime(scope.row.insertTime) }}
                 </template>
             </el-table-column>
+            <el-table-column prop="tips" label="是否提示"  width="200" >
+                <template #default="scope">
+                    <el-tag type="danger" v-if="scope.row.tips === 0" @click="noTips(scope.row.id, scope.row.tips)">不提示</el-tag>
+                    <el-tag type="success" v-else @click="noTips(scope.row.id, scope.row.tips)">提示</el-tag>
+                </template>
+            </el-table-column>
         </el-table>
-        <el-pagination
-            :page-size="pageSize"
-            :pager-count=9
-            layout="prev, pager, next"
-            :total=total
-            @current-change="handleCurrentChange"
-        />
+        <div class="pagination-container">
+            <el-pagination
+                :page-size="pageSize"
+                :pager-count=9
+                layout="prev, pager, next"
+                :total=total
+                @current-change="handleCurrentChange"
+            />
+        </div>
         <el-button type="primary" @click="goToBack">返回上级</el-button>
     </div>
 </template>
@@ -78,7 +86,33 @@ const formatTime = (timeStamp: any) => {
     const seconds = ('0' + dateObj.getSeconds()).slice(-2);
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+const noTips = async (id: number, tips: number) => {
+    try{
+        await request.get("/task_result_info/no-tips", {
+            params: {
+                id: id,
+                tips: tips == 0 ? 1 : 0,
+            }
+        })
+        fetchTaskResult();
+    }catch(e){
+        console.log(e);
+    }
+}
 onMounted(() => {
     fetchTaskResult();
 });
 </script>
+<style scoped>
+.table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+</style>

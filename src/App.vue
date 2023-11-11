@@ -11,16 +11,30 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
-const activeTab = ref('home');
+const route = useRoute();
+const activeTab = ref('home'); // 默认设置为'home'
 
+// 当路由变更时，更新activeTab
+watch(() => route.name, (newRouteName) => {
+  if (typeof newRouteName === 'string' && newRouteName !== activeTab.value) {
+    activeTab.value = newRouteName;
+  }
+});
+
+// 当Tab变更时，更新路由
+watch(activeTab, (newTab) => {
+  if (newTab !== router.currentRoute.value.name) {
+    updateRoute(newTab);
+  }
+});
+
+// 更新路由的函数
 const updateRoute = (tabName: string) => {
   router.push({ name: tabName });
 };
-
-watch(activeTab, (newTab) => {
-  updateRoute(newTab);
-});
 </script>
+
+

@@ -1,11 +1,16 @@
 <template>
-    <div>
-        <el-input v-model="searchQuery" placeholder="Search by username" @input="debouncedHandleSearch" />
+    <div class="table-container">
+        <el-input-group>
+            <el-input v-model="searchQuery" placeholder="Search by username" @input="debouncedHandleSearch"/>
+            <template #append>
+                <el-button icon="el-icon-search"/>
+            </template>
+        </el-input-group>
         <el-table v-loading="loading" :data="users['records']" stripe style="width: 100%">
             <el-table-column prop="uid" label="Id"  width="280" />
             <el-table-column label="头像" width="280">
                 <template #default="scope">
-                    <img referrer="no-referrer|origin|unsafe-url" referrerPolicy="no-referrer" :src="scope.row.userSmallAvatar" alt="User Image" style="width: 50px; height: 50px;"/>
+                    <el-avatar :src="scope.row.userSmallAvatar"/>
                 </template>
             </el-table-column>
             <el-table-column prop="username" label="UserName" width="280" />
@@ -18,13 +23,15 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination
+        <div class="pagination-container">
+            <el-pagination
             :page-size="pageSize"
             :pager-count=9
             layout="prev, pager, next"
             :total=parseInt(users.total)
             @current-change="handleCurrentChange"
         />
+        </div>
     </div>
 </template>
 
@@ -79,3 +86,44 @@ onMounted(() => {
     getUsers()
 })
 </script>
+<style scoped>
+.table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+.el-input {
+    border: 1px solid #d3dce6;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+}
+
+.el-table th, .el-table td {
+    padding: 12px 10px;
+}
+
+.el-table tr:hover {
+    background: #f5f7fa;
+}
+
+img.user-avatar {
+    border-radius: 50%;
+}
+
+.el-button {
+    margin-right: 10px;
+}
+
+.el-pagination .el-pager li, .el-pagination .el-pager .number, .el-pagination .el-pager .btn-prev, .el-pagination .el-pager .btn-next {
+    min-width: 35px;
+    height: 35px;
+    line-height: 35px;
+}
+
+</style>

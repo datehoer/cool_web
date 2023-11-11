@@ -1,5 +1,5 @@
 <template>
-    <div class="home">
+    <div class="table-container">
         <img alt="Vue logo" src="../assets/logo.png" />
         <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
     </div>
@@ -16,3 +16,10 @@ import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
 })
 export default class HomeView extends Vue {}
 </script>
+<style scoped>
+.table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+</style>

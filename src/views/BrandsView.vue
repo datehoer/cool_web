@@ -1,5 +1,5 @@
 <template>
-    <div class="brands">
+    <div class="table-container">
         <div>
             <el-table v-loading="loading" :data="brands" stripe style="width: 100%">
                 <el-table-column prop="id" label="Id"  width="200" />
@@ -15,13 +15,15 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <el-pagination
-                :page-size="pageSize"
-                :pager-count=9
-                layout="prev, pager, next"
-                :total=total
-                @current-change="handleCurrentChange"
-            />
+            <div class="pagination-container">
+                <el-pagination
+                    :page-size="pageSize"
+                    :pager-count=9
+                    layout="prev, pager, next"
+                    :total=total
+                    @current-change="handleCurrentChange"
+                />
+            </div>
         </div>
         <el-button type="primary" @click="goToBack">返回上级</el-button>
     </div>
@@ -72,3 +74,16 @@ onMounted(() => {
     fetchBrands();
 });
 </script>
+<style scoped>
+.table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+</style>
