@@ -44,7 +44,9 @@
                     @select="handleSelect"
                 />
             </el-form-item>
-
+            <el-form-item label="监控时间" prop="maxWatch">
+                <el-input v-model="form.maxWatch" type="textarea" placeholder="请输入监控时间" />
+            </el-form-item>
             <el-form-item label="延迟时间" prop="productDelay">
                 <el-input v-model="form.productDelay" type="textarea" placeholder="请输入延迟时间" />
             </el-form-item>
@@ -81,6 +83,7 @@ const form = reactive({
     productName: '',
     insertTime: '',
     productDelay: '',
+    maxWatch: ''
 })
 const ruleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
@@ -92,6 +95,9 @@ const rules = reactive<FormRules>({
     ],
     productDelay: [
         { required: true, message: '请输入延迟时间', trigger: 'blur' },
+    ],
+    maxWatch: [
+        { required: true, message: '请输入监控时间', trigger: 'blur' },
     ],
 })
 const fetchProduct = async () => {
