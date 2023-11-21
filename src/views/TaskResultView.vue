@@ -54,7 +54,7 @@ const page = ref(1); // 当前页码
 const taskId = route.params.taskId;
 const fetchTaskResult = async () => {
     try{
-        const res = await request.get("/task_result_info", {
+        const res = await request.get("/api/task_result_info", {
             params: {
                 page: page.value,
                 limit: pageSize.value,
@@ -88,7 +88,7 @@ const formatTime = (timeStamp: any) => {
 }
 const noTips = async (id: number, tips: number) => {
     try{
-        await request.get("/task_result_info/no-tips", {
+        await request.get("/api/task_result_info/no-tips", {
             params: {
                 id: id,
                 tips: tips == 0 ? 1 : 0,

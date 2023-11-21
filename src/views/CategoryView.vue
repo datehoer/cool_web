@@ -51,7 +51,7 @@ const page = ref(1); // 当前页码
 const fetchCategory = async () => {
     loading.value = true;
     try {
-        const response = await request.get('/category', {
+        const response = await request.get('/api/category', {
             params: {
                 page: page.value,
                 limit: pageSize.value,
@@ -67,7 +67,7 @@ const fetchCategory = async () => {
 
         // 构造自定义查询字符串
         const query = ids.map(id => `ids=${encodeURIComponent(id)}`).join('&');
-        const msgCounts = await request.get(`/msg-count?${query}`)
+        const msgCounts = await request.get(`/api/msg-count?${query}`)
         const msgCountsData = msgCounts.data;
         brands.value.forEach((brand: any) => {
             brand.msgCount = msgCountsData[brand.id] || 0;

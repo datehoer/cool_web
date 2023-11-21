@@ -11,7 +11,7 @@ router.beforeEach(async (to, from, next) => {
     // 检查会话存储中是否已经显示过通知
     if (sessionStorage.getItem("notified") !== "true") {
         try {
-            const response = await request.get('/task_info/tips');
+            const response = await request.get('/api/task_info/tips');
             const data = response.data;
             for (const task in data) {
                 ElNotification({

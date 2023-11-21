@@ -44,7 +44,7 @@ const page = ref(1); // 当前页码
 const fetchBrands = async () => {
     loading.value = true;
     try {
-        const response = await request.get('/brands', {
+        const response = await request.get('/api/brands', {
             params: {
                 page: page.value,
                 limit: pageSize.value,

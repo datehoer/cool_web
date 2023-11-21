@@ -47,7 +47,7 @@ const searchQuery = ref('')
 const loading = ref(true)
 const getUsers = (search = searchQuery.value) => {
     request
-        .get('/user_info', {
+        .get('/api/user_info', {
             params: {
                 limit: limit.value,
                 page: page.value,

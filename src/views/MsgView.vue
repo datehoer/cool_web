@@ -44,7 +44,7 @@ const page = ref(1); // 当前页码
 const categoryId = route.params.categoryId;
 const fetchMsg = async () => {
     try{
-        const res = await request.get("/msg", {
+        const res = await request.get("/api/msg", {
             params: {
                 page: page.value,
                 limit: pageSize.value,

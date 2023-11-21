@@ -7,11 +7,20 @@ import Category from '../views/CategoryView.vue';
 import Msg from '../views/MsgView.vue';
 import Task from '../views/TaskView.vue';
 import TaskResult from '../views/TaskResultView.vue';
+import Login from "../views/LoginView.vue";
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         name: 'home',
         component: HomeView
+    },
+    {
+        path: '/login',
+        name: 'login',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: Login
     },
     {
         path: '/about',
@@ -45,8 +54,8 @@ const routes: Array<RouteRecordRaw> = [
         // which is lazy-loaded when the route is visited.
         component: Brands,
         beforeEnter: (to, from, next) => {
-        console.log('Navigating to brands...');
-        next();
+            console.log('Navigating to brands...');
+            next();
         }
     },
     {
@@ -88,5 +97,12 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes
 })
-
+router.beforeEach((to, from, next) => {
+    const isLoggedIn = localStorage.getItem('token'); // 或者使用其他方法检查登录状态
+    if (!isLoggedIn && to.path !== '/login') {
+        next('/login');
+    } else {
+        next();
+    }
+});
 export default router

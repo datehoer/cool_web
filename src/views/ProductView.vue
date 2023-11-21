@@ -40,7 +40,7 @@ const page = ref(1);
 const fetchProduct = async () => {
     loading.value = true;
     try {
-        const response = await request.get('/product_info',
+        const response = await request.get('/api/product_info',
         {
             params: {
                 page: page.value,

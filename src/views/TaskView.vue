@@ -103,7 +103,7 @@ const rules = reactive<FormRules>({
 const fetchProduct = async () => {
     loading.value = true;
     try {
-        const response = await request.get('/task_info',
+        const response = await request.get('/api/task_info',
         {
             params: {
                 page: page.value,
@@ -125,7 +125,7 @@ const save = async (formEl: FormInstance | undefined) => {
         if (valid) {
             form.insertTime = new Date().toISOString();
             try{
-                const res = await request.post("/task_info", form)
+                const res = await request.post("/api/task_info", form)
                 console.log(res);
             }catch(e){
                 console.log(e);
@@ -142,7 +142,7 @@ const fetchCategories = debounce(async (queryString: string, callback: Function)
     // 原有的 fetchCategories 逻辑
     if (queryString) {
         try {
-            const response = await request.get('/category-name', {
+            const response = await request.get('/api/category-name', {
                 params: { name: queryString }
             });
             const formattedData = Object.entries(response.data).map(([name, productId]) => {
@@ -157,7 +157,7 @@ const fetchCategories = debounce(async (queryString: string, callback: Function)
 }, 500);
 const deleteTask = async (id: number) => {
     try {
-        const response = await request.delete(`/task_info?id=${id}`);
+        const response = await request.delete(`/api/task_info?id=${id}`);
         console.log(response);
     } catch (error) {
         console.error(error);
