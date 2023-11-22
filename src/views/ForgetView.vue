@@ -1,25 +1,20 @@
 <template>
     <div class="login-container">
       <el-card class="box-card">
-        <h1 class="title">Sign in</h1>
-        <el-form ref="loginFormRef" :model="loginForm" :rules="rules" class="login-form">
-          <el-form-item prop="username">
-            <el-input v-model.trim="loginForm.username" placeholder="username"/>
+        <h1 class="title">Reset Password</h1>
+        <el-form ref="resetPasswordFormRef" :model="resetPasswordForm" :rules="resetPasswordRules" class="login-form">
+          <el-form-item prop="email">
+            <el-input v-model.trim="resetPasswordForm.email" placeholder="email"/>
           </el-form-item>
-          <el-form-item prop="password">
-            <el-input type="password" v-model.trim="loginForm.password" placeholder="password"/>
-          </el-form-item>
+            <el-form-item prop="code">
+                <el-input v-model.trim="resetPasswordForm.code" placeholder="code"/>
+            </el-form-item>
+            <el-form-item prop="newPassword">
+                <el-input type="password" v-model.trim="resetPasswordForm.newPassword" placeholder="new password"/>
+            </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="login-btn" @click="handleLogin">Login</el-button>
+            <el-button type="primary" class="login-btn" @click="handleResetPassword">Send Reset Link</el-button>
           </el-form-item>
-          <div class="signup-text">Don't have account?
-            <el-button
-                type="primary"
-                text
-                @click="goToSignUp"
-                >Sign up</el-button
-            >
-        </div>
         </el-form>
       </el-card>
     </div>
@@ -34,20 +29,22 @@
 
   const store = useStore();
   const router = useRouter();
-  const loginFormRef = ref<any>(null);
-  const loginForm = ref({
-    username: '',
-    password: ''
+  const resetPasswordFormRef = ref<any>(null);
+  const resetPasswordForm = ref({
+    email: '',
+    code: '',
+    newPassword: '',
   });
   
-  const rules = {
-    username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-    password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+  const resetPasswordRules = {
+    email: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+    code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+    newPassword: [{ required: true, message: '请输入密码', trigger: 'blur' }]
   };
   
   const fetchLogin = async () => {
     try {
-      const response = await request.post("/login", loginForm.value);
+      const response = await request.post("/login", resetPasswordForm.value);
       if (response && response.data.code === 1) {
         localStorage.setItem('token', response.data.data.token);
         store.dispatch("login")
@@ -60,14 +57,9 @@
       console.error(error);
     }
   };
-  const goToSignUp = () => {
-    router.push({ name: 'register' });
-  };
-  const goToForgetPassword = () => {
-    router.push({ name: 'forget' });
-  };
-  const handleLogin = () => {
-    loginFormRef.value.validate((valid: any) => {
+  
+  const handleResetPassword = () => {
+    resetPasswordFormRef.value.validate((valid: any) => {
       if (valid) fetchLogin();
     });
   };

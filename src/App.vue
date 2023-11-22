@@ -11,3 +11,11 @@ import TopBar from './components/TopBar.vue';
 const store = useStore();
 const isLoggedIn = computed(() => store.state.isLoggedIn);
 </script>
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* 防止出现滚动条 */
+}
+</style>

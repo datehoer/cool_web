@@ -8,6 +8,8 @@ import Msg from '../views/MsgView.vue';
 import Task from '../views/TaskView.vue';
 import TaskResult from '../views/TaskResultView.vue';
 import Login from "../views/LoginView.vue";
+import Register from "../views/RegisterView.vue";
+import Forget from "../views/ForgetView.vue";
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
@@ -21,6 +23,22 @@ const routes: Array<RouteRecordRaw> = [
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: Login
+    },
+    {
+        path: '/register',
+        name: 'register',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: Register
+    },
+    {
+        path: '/forget',
+        name: 'forget',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: Forget
     },
     {
         path: '/about',
@@ -99,7 +117,7 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
     const isLoggedIn = localStorage.getItem('token'); // 或者使用其他方法检查登录状态
-    if (!isLoggedIn && to.path !== '/login') {
+    if (!isLoggedIn && to.path !== '/login' && to.path !== '/register' && to.path !== '/forget') {
         next('/login');
     } else {
         next();
