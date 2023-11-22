@@ -1,6 +1,6 @@
 <template>
-  <TopBar v-if="isLoggedIn"/>
-  <router-view/>
+    <TopBar v-if="isLoggedIn" />
+    <router-view />
 </template>
 
 <script lang="ts" setup>
@@ -12,10 +12,11 @@ const store = useStore();
 const isLoggedIn = computed(() => store.state.isLoggedIn);
 </script>
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden; /* 防止出现滚动条 */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
 }
 </style>

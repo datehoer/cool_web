@@ -28,6 +28,11 @@ router.beforeEach(async (to, from, next) => {
     }
     next();
 });
+const token = localStorage.getItem('token');
+if (token) {
+    store.commit('SET_LOGIN_STATE', true);
+}
+
 app.use(ElementPlus)
 
 app.use(store)

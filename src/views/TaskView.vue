@@ -1,8 +1,8 @@
 <template>
     <div class="table-container">
-        <el-button type="primary" @click="dialogVisible = true">任务下发</el-button>
+        <el-button type="primary" @click="dialogVisible = true" class="task-button">任务下发</el-button>
         <el-table v-loading="loading" :data="task" stripe style="width: 100%">
-            <el-table-column prop="id" label="Id"  width="200" />
+            <el-table-column prop="id" label="Id" width="200" />
             <el-table-column prop="keyword" label="keyword" width="250" />
             <el-table-column prop="productName" label="关注商品名称" width="380" />
             <el-table-column prop="productDelay" label="延时" width="380" />
@@ -15,49 +15,33 @@
         </el-table>
         <div class="pagination-container">
             <el-pagination
-            :page-size="pageSize"
-            :pager-count=9
-            layout="prev, pager, next"
-            :total=total
-            @current-change="handleCurrentChange"
-        />
+            :page-size="pageSize" :pager-count=9 layout="prev, pager, next" :total=total
+                @current-change="handleCurrentChange" />
         </div>
-        <el-dialog
-            v-model="dialogVisible"
-            title="新建任务"
-            width="700px"
-        >
-            <el-form
-            ref="ruleFormRef"
-            :rules="rules"
-            :model="form"
-            label-width="95px"
-            label-position="left">
-            <el-form-item label="关键词" prop="keyword">
-                <el-input v-model="form.keyword" type="textarea" placeholder="请输入关键词" />
-            </el-form-item>
-            <el-form-item label="商品名称" prop="productName">
-                <el-autocomplete
-                    v-model="form.productName"
-                    :fetch-suggestions="fetchCategories"
-                    placeholder="请输入关注的商品名称"
-                    @select="handleSelect"
-                />
-            </el-form-item>
-            <el-form-item label="监控时间" prop="maxWatch">
-                <el-input v-model="form.maxWatch" type="textarea" placeholder="请输入监控时间" />
-            </el-form-item>
-            <el-form-item label="延迟时间" prop="productDelay">
-                <el-input v-model="form.productDelay" type="textarea" placeholder="请输入延迟时间" />
-            </el-form-item>
+        <el-dialog v-model="dialogVisible" title="新建任务" width="700px">
+            <el-form ref="ruleFormRef" :rules="rules" :model="form" label-width="95px" label-position="left">
+                <el-form-item label="关键词" prop="keyword">
+                    <el-input v-model="form.keyword" type="textarea" placeholder="请输入关键词" />
+                </el-form-item>
+                <el-form-item label="商品名称" prop="productName">
+                    <el-autocomplete
+                    v-model="form.productName" :fetch-suggestions="fetchCategories"
+                        placeholder="请输入关注的商品名称" @select="handleSelect" />
+                </el-form-item>
+                <el-form-item label="监控时间" prop="maxWatch">
+                    <el-input v-model="form.maxWatch" type="textarea" placeholder="请输入监控时间,天为单位" />
+                </el-form-item>
+                <el-form-item label="延迟时间" prop="productDelay">
+                    <el-input v-model="form.productDelay" type="textarea" placeholder="请输入延迟时间,毫秒为单位" />
+                </el-form-item>
             </el-form>
             <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="dialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="save(ruleFormRef)">
-                保存
-                </el-button>
-            </span>
+                <span class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="save(ruleFormRef)">
+                        保存
+                    </el-button>
+                </span>
             </template>
         </el-dialog>
     </div>
@@ -104,12 +88,12 @@ const fetchProduct = async () => {
     loading.value = true;
     try {
         const response = await request.get('/api/task_info',
-        {
-            params: {
-                page: page.value,
-                limit: pageSize.value
-            }
-        });
+            {
+                params: {
+                    page: page.value,
+                    limit: pageSize.value
+                }
+            });
         task.value = response.data.records;
         total.value = response.data.total;
         pageSize.value = response.data.size;
@@ -124,12 +108,12 @@ const save = async (formEl: FormInstance | undefined) => {
     await formEl.validate(async (valid, fields) => {
         if (valid) {
             form.insertTime = new Date().toISOString();
-            try{
+            try {
                 const res = await request.post("/api/task_info", form)
                 console.log(res);
-            }catch(e){
+            } catch (e) {
                 console.log(e);
-            }finally{
+            } finally {
                 dialogVisible.value = false
                 fetchProduct();
             }
@@ -184,21 +168,99 @@ const goToTaskResult = (id: number) => {
 }
 </script>
 <style scoped>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden; /* 防止出现滚动条 */
-}
 .table-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 100%;
+    max-width: 1900px; /* 调整为适合您的布局宽度 */
+    margin: 0 auto;
+    background: #ffffff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.el-input-group {
+    margin: 20px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.el-input-group .el-input {
+    border: 1px solid #e4e7ed;
+    border-radius: 4px;
+}
+
+.el-table {
+    margin: 20px;
+}
+
+.el-table th {
+    background-color: #f2f6fc;
+    color: #333;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.el-table-column {
+    text-align: center;
+}
+
+.el-table td {
+    color: #666;
+    padding: 12px 10px;
+}
+
+.el-table tr:hover {
+    background: #ecf5ff;
+}
+
+.el-pagination {
+    margin: 20px;
+    text-align: center;
+}
+
+.el-pagination .el-pager li.active {
+    background-color: #409eff;
+    color: #fff;
+}
+
+.el-button {
+    font-size: 14px;
+    border: none;
+}
+
+.el-button--primary {
+    background-color: #409eff;
+    color: #fff;
+}
+
+.el-button--danger {
+    background-color: #f56c6c;
+    color: #fff;
 }
 
 .pagination-container {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
+    padding: 10px 20px;
+    background: #f9f9f9;
+    border-top: 1px solid #ebeef5;
+}
+
+.task-button {
+    margin: 20px;
+}
+/* 响应式布局样式 */
+@media screen and (max-width: 768px) {
+    .table-container {
+        margin: 10px;
+    }
+
+    .el-input-group, .el-pagination {
+        margin: 10px;
+    }
+
+    .el-table th, .el-table td {
+        padding: 8px 5px;
+    }
 }
 </style>
+
