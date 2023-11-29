@@ -54,7 +54,7 @@ import { useRouter } from 'vue-router';
 import request from '@/utils/request';
 import { FormInstance, FormRules } from 'element-plus';
 import debounce from 'lodash/debounce';
-import getUsernameFromToken from '@/utils/parseJwt';
+import {getUsernameFromToken} from '@/utils/parseJwt';
 const router = useRouter();
 const task = ref<any>([]);
 const loading = ref(false);

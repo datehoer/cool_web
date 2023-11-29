@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { getUserRolesFromToken } from '@/utils/parseJwt';
 import HomeView from '../views/HomeView.vue'
 import UserinfoView from '../views/UserinfoView.vue';
 import ProductView from '../views/ProductView.vue';
@@ -14,7 +15,11 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         name: 'home',
-        component: HomeView
+        component: HomeView,
+        meta: {
+            requiresAuth: true,
+            roles: ['user']
+        }
     },
     {
         path: '/login',
@@ -46,7 +51,11 @@ const routes: Array<RouteRecordRaw> = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
+        meta: {
+            requiresAuth: true,
+            roles: ['user']
+        }
     },
     {
         path: '/userinfo',
@@ -54,7 +63,11 @@ const routes: Array<RouteRecordRaw> = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: UserinfoView
+        component: UserinfoView,
+        meta: {
+            requiresAuth: true,
+            roles: ['user']
+        }
     },
     {
         path: '/product',
@@ -62,7 +75,11 @@ const routes: Array<RouteRecordRaw> = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: ProductView
+        component: ProductView,
+        meta: {
+            requiresAuth: true,
+            roles: ['user']
+        }
     },
     {
         path: '/brands/:productId',
@@ -74,6 +91,10 @@ const routes: Array<RouteRecordRaw> = [
         beforeEnter: (to, from, next) => {
             console.log('Navigating to brands...');
             next();
+        },
+        meta: {
+            requiresAuth: true,
+            roles: ['user']
         }
     },
     {
@@ -82,7 +103,11 @@ const routes: Array<RouteRecordRaw> = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: Category
+        component: Category,
+        meta: {
+            requiresAuth: true,
+            roles: ['user']
+        }
     },
     {
         path: '/msg/:categoryId',
@@ -90,7 +115,11 @@ const routes: Array<RouteRecordRaw> = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: Msg
+        component: Msg,
+        meta: {
+            requiresAuth: true,
+            roles: ['user']
+        }
     },
     {
         path: '/task',
@@ -98,7 +127,11 @@ const routes: Array<RouteRecordRaw> = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: Task
+        component: Task,
+        meta: {
+            requiresAuth: true,
+            roles: ['admin']
+        }
     },
     {
         path: '/taskResult/:taskId',
@@ -106,7 +139,11 @@ const routes: Array<RouteRecordRaw> = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: TaskResult
+        component: TaskResult,
+        meta: {
+            requiresAuth: true,
+            roles: ['admin']
+        }
     }
 
 ]
@@ -116,9 +153,16 @@ const router = createRouter({
     routes
 })
 router.beforeEach((to, from, next) => {
-    const isLoggedIn = localStorage.getItem('token'); // 或者使用其他方法检查登录状态
+    const isLoggedIn = localStorage.getItem('token');
+    const userRoles = isLoggedIn ? getUserRolesFromToken(localStorage.getItem('token')) : [];
     if (!isLoggedIn && to.path !== '/login' && to.path !== '/register' && to.path !== '/forget') {
         next('/login');
+    } else if (to.meta && to.meta.requiresAuth && to.meta.roles) {
+        if (to.meta.roles.some(role => userRoles.includes(role))) {
+            next();
+        } else {
+            next('/home');
+        }
     } else {
         next();
     }

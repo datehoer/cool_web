@@ -25,7 +25,7 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import getUsernameFromToken from '@/utils/parseJwt';
+import { getUsernameFromToken, getUserRolesFromToken } from '@/utils/parseJwt';
 import { useStore } from 'vuex';
 const store = useStore();
 const hover = ref(false);
@@ -50,8 +50,10 @@ watch(() => route.name, (newRouteName) => {
     }
 });
 watch(activeTab, (newTab) => {
-    if (newTab !== route.name) {
+    if (canAccessPage(newTab) && newTab !== route.name) {
         router.push({ name: newTab });
+    }else{
+        router.push({ name: 'home' });
     }
 });
 const logout = () => {
@@ -60,6 +62,20 @@ const logout = () => {
     store.dispatch('logout')
     router.push({ name: 'login' }); // 跳转到登录页面
 };
+function canAccessPage(pageName) {
+    const route = router.getRoutes().find(r => r.name === pageName);
+    if (!route) return false;
+
+    const userRoles = getUserRolesFromToken(localStorage.getItem('token'));
+    if (route.meta && route.meta.requiresAuth) {
+        // 如果路由需要认证
+        if (!userRoles) return false;
+        if (route.meta.roles.some(role => userRoles.includes(role))) {
+            return true;
+        }
+    }
+    return false; // 默认返回 false
+}
 </script>
 
 <style scoped>
