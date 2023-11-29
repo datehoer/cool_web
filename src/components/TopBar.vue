@@ -56,6 +56,7 @@ watch(activeTab, (newTab) => {
 });
 const logout = () => {
     localStorage.removeItem('token'); // 清除 token
+    sessionStorage.removeItem('notified'); // 清除 token
     store.dispatch('logout')
     router.push({ name: 'login' }); // 跳转到登录页面
 };

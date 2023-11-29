@@ -6,7 +6,8 @@
             <el-table-column prop="keyword" label="keyword" width="250" />
             <el-table-column prop="productName" label="关注商品名称" width="380" />
             <el-table-column prop="productDelay" label="延时" width="380" />
-            <el-table-column label="操作" width="380">
+            <el-table-column prop="taskStatus" label="任务状态" width="380" />
+            <el-table-column label="操作" width="300">
                 <template #default="scope">
                     <el-button size="small" @click="goToTaskResult(scope.row.id)">进入</el-button>
                     <el-button size="small" type="danger" @click="handleDelete(scope.row.idAsString)">删除</el-button>
@@ -32,7 +33,7 @@
                     <el-input v-model="form.maxWatch" type="textarea" placeholder="请输入监控时间,天为单位" />
                 </el-form-item>
                 <el-form-item label="延迟时间" prop="productDelay">
-                    <el-input v-model="form.productDelay" type="textarea" placeholder="请输入延迟时间,毫秒为单位" />
+                    <el-input v-model="form.productDelay" type="textarea" placeholder="请输入延迟时间,分钟为单位" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -53,6 +54,7 @@ import { useRouter } from 'vue-router';
 import request from '@/utils/request';
 import { FormInstance, FormRules } from 'element-plus';
 import debounce from 'lodash/debounce';
+import getUsernameFromToken from '@/utils/parseJwt';
 const router = useRouter();
 const task = ref<any>([]);
 const loading = ref(false);
@@ -67,7 +69,9 @@ const form = reactive({
     productName: '',
     insertTime: '',
     productDelay: '',
-    maxWatch: ''
+    maxWatch: '',
+    taskUsername: '',
+    taskStatus: ''
 })
 const ruleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
@@ -87,7 +91,7 @@ const rules = reactive<FormRules>({
 const fetchProduct = async () => {
     loading.value = true;
     try {
-        const response = await request.get('/api/task_info',
+        const response = await request.get('/task/task_info',
             {
                 params: {
                     page: page.value,
@@ -108,8 +112,12 @@ const save = async (formEl: FormInstance | undefined) => {
     await formEl.validate(async (valid, fields) => {
         if (valid) {
             form.insertTime = new Date().toISOString();
+            const token = localStorage.getItem('token'); // 替换为实际的 token key
+            const name = getUsernameFromToken(token);
+            form.taskUsername = name;
+            form.taskStatus = "未开始";
             try {
-                const res = await request.post("/api/task_info", form)
+                const res = await request.post("/task/task_info", form)
                 console.log(res);
             } catch (e) {
                 console.log(e);
@@ -141,7 +149,7 @@ const fetchCategories = debounce(async (queryString: string, callback: Function)
 }, 500);
 const deleteTask = async (id: number) => {
     try {
-        const response = await request.delete(`/api/task_info?id=${id}`);
+        const response = await request.delete(`/task/task_info?id=${id}`);
         console.log(response);
     } catch (error) {
         console.error(error);

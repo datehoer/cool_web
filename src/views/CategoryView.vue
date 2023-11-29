@@ -107,7 +107,7 @@ onMounted(() => {
 <style scoped>
 .table-container {
     width: 100%;
-    max-width: 1900px; /* 调整为适合您的布局宽度 */
+    max-width: 1800px; /* 调整为适合您的布局宽度 */
     margin: 0 auto;
     background: #ffffff;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
