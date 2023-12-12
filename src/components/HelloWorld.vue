@@ -2,13 +2,14 @@
     <div class="hello">
         <div class="common-layout">
             <el-container>
-                <el-header :style="{ height: '50px', width: '1000px', backgroundColor: '#87CEEB' }">
-                    <p class="centered-text">机器人</p>
+                <el-header :style="{ height: '50px', width: '400px', backgroundColor: '#87CEEB' }">
+                    <p class="centered-text">CoolGPT</p>
                 </el-header>
-                <el-main :style="{ height: '600px', width: '1000px', border: '2px solid #ccc' }">
+                <el-main :style="{ height: '600px', width: '400px', border: '2px solid #ccc' }">
                     <el-scrollbar height="600px">
                         <div
-                        class="message-container" v-for="(message, index) in messages" :key="index"
+                        class="message-container"
+                        v-for="(message, index) in messages" :key="index"
                             :class="get_message">
                             <div class="message-container">
                                 <div class="bubble">
@@ -23,14 +24,16 @@
                         </div>
                     </el-scrollbar>
                 </el-main>
-                <el-row :style="{ width: '1000px' }">
-                    <el-input
-                        v-model="textarea"
-                        :autosize="{ minRows: 2, maxRows: 4 }"
-                        type="textarea"
-                        placeholder="Please input"
-                    />
-                    <el-button type="primary" plain style="width: 50px;" @click="handleButtonClick">发送</el-button>
+                <el-row :style="{ width: '400px' }" :gutter="20">
+                    <el-col :span="18">
+                        <el-input
+                        v-model="textarea" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
+                            placeholder="Please input" />
+                    </el-col>
+                    <el-col :span="6">
+                        <el-button type="primary" style="width: 42%; height: 100%;" plain @click="handleButtonSend">发送</el-button>
+                        <el-button type="danger" style="width: 42%; height: 100%;" plain @click="handleButtonClear">清空</el-button>
+                    </el-col>
                 </el-row>
             </el-container>
         </div>
@@ -41,7 +44,9 @@
 import request from '@/utils/request';
 import { ref, onMounted } from 'vue';
 import MarkdownIt from 'markdown-it';
-const chat_id = ref(1);
+import { getChatIdFromToken } from '@/utils/parseJwt';
+const token = localStorage.getItem('token'); // 替换为实际的 token key
+const chat_id = getChatIdFromToken(token);
 const textarea = ref("");
 const messages = ref<any>([]);
 const md = new MarkdownIt();
@@ -52,7 +57,7 @@ const get_message = async () => {
     try {
         const res = await request.get("/chat/chat-get-message", {
             params: {
-                chat_id: chat_id.value
+                chat_id: chat_id
             }
         })
         if (res.data.code === 1) {
@@ -62,15 +67,32 @@ const get_message = async () => {
         console.log(e);
     }
 }
-const handleButtonClick = async () => {
+const handleButtonSend = async () => {
     try {
         const res = await request.post("/chat/chat-post-message",
             {
-                chat_id: chat_id.value,
+                chat_id: chat_id,
                 message: textarea.value
             }
         )
-        if (res.data.code === 0) {
+        if (res.data.code === 1) {
+            messages.value = res.data.data;
+            textarea.value = "";
+            get_message();
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+const handleButtonClear = async () => {
+    try {
+        const res = await request.delete("/chat/chat-delete-message",{
+                params: {
+                    chat_id: chat_id
+                }
+            }
+        )
+        if (res.data.code === 1) {
             messages.value = res.data.data;
             textarea.value = "";
             get_message();
