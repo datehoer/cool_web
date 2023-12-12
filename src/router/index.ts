@@ -158,7 +158,7 @@ router.beforeEach((to, from, next) => {
     if (!isLoggedIn && to.path !== '/login' && to.path !== '/register' && to.path !== '/forget') {
         next('/login');
     } else if (to.meta && to.meta.requiresAuth && to.meta.roles) {
-        if (to.meta.roles.some(role => userRoles.includes(role))) {
+        if (Array.isArray(to.meta.roles) && to.meta.roles.some(role => userRoles.includes(role))) {
             next();
         } else {
             next('/home');
