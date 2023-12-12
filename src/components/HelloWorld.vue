@@ -12,12 +12,12 @@
                             :class="get_message">
                             <div class="message-container">
                                 <div class="bubble">
-                                    <div class="message bot" v-if="index % 2 != 0">{{ message }}</div>
+                                    <div class="message bot" v-if="index % 2 != 0" v-html="parseMarkdown(message)"></div>
                                 </div>
                             </div>
                             <div class="message-container">
                                 <div class="bubble">
-                                    <div class="message user" v-if="index % 2 == 0">{{ message }}</div>
+                                    <div class="message user" v-if="index % 2 == 0" v-html="parseMarkdown(message)"></div>
                                 </div>
                             </div>
                         </div>
@@ -39,10 +39,15 @@
 
 <script lang="ts" setup>
 import request from '@/utils/request';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
+import MarkdownIt from 'markdown-it';
 const chat_id = ref(1);
 const textarea = ref("");
 const messages = ref<any>([]);
+const md = new MarkdownIt();
+const parseMarkdown = (markdownText) => {
+    return md.render(markdownText);
+};
 const get_message = async () => {
     try {
         const res = await request.get("/chat/chat-get-message", {
@@ -96,12 +101,12 @@ onMounted(() => {
 .bubble {
     background-color: #e8e8e8;
     color: #000;
-    padding: 10px;
     border-radius: 5px;
 }
 
 .message {
     text-align: left;
+    padding: 1px 10px;
     margin: 0;
 }
 </style>
