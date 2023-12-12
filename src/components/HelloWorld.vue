@@ -1,78 +1,107 @@
 <template>
     <div class="hello">
-        <h1>{{ msg }}</h1>
-        <p>
-            For a guide and recipes on how to configure / customize this project,<br />
-            check out the
-            <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-        </p>
-        <h3>Installed CLI Plugins</h3>
-        <ul>
-            <li><a
-                href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank"
-                    rel="noopener">babel</a></li>
-            <li><a
-                href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank"
-                    rel="noopener">router</a></li>
-            <li><a
-                href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank"
-                    rel="noopener">vuex</a></li>
-            <li><a
-                href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank"
-                    rel="noopener">eslint</a></li>
-            <li><a
-                href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank"
-                    rel="noopener">typescript</a></li>
-        </ul>
-        <h3>Essential Links</h3>
-        <ul>
-            <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-            <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-            <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-            <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-            <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-        </ul>
-        <h3>Ecosystem</h3>
-        <ul>
-            <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-            <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-            <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a>
-            </li>
-            <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-            <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-        </ul>
+        <div class="common-layout">
+            <el-container>
+                <el-header :style="{ height: '50px', width: '1000px', backgroundColor: '#87CEEB' }">
+                    <p class="centered-text">机器人</p>
+                </el-header>
+                <el-main :style="{ height: '600px', width: '1000px', border: '2px solid #ccc' }">
+                    <el-scrollbar height="600px">
+                        <div
+                        class="message-container" v-for="(message, index) in messages" :key="index"
+                            :class="get_message">
+                            <div class="message-container">
+                                <div class="bubble">
+                                    <div class="message bot" v-if="index % 2 != 0">{{ message }}</div>
+                                </div>
+                            </div>
+                            <div class="message-container">
+                                <div class="bubble">
+                                    <div class="message user" v-if="index % 2 == 0">{{ message }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </el-scrollbar>
+                </el-main>
+                <el-row :style="{ width: '1000px' }">
+                    <el-input
+                        v-model="textarea"
+                        :autosize="{ minRows: 2, maxRows: 4 }"
+                        type="textarea"
+                        placeholder="Please input"
+                    />
+                    <el-button type="primary" plain style="width: 50px;" @click="handleButtonClick">发送</el-button>
+                </el-row>
+            </el-container>
+        </div>
     </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component'
-
-@Options({
-    props: {
-        msg: String
+<script lang="ts" setup>
+import request from '@/utils/request';
+import { ref, onMounted, watch } from 'vue';
+const chat_id = ref(1);
+const textarea = ref("");
+const messages = ref<any>([]);
+const get_message = async () => {
+    try {
+        const res = await request.get("/chat/chat-get-message", {
+            params: {
+                chat_id: chat_id.value
+            }
+        })
+        if (res.data.code === 1) {
+            messages.value = res.data.data;
+        }
+    } catch (e) {
+        console.log(e);
     }
-})
-export default class HelloWorld extends Vue {
-    msg!: string
 }
+const handleButtonClick = async () => {
+    try {
+        const res = await request.post("/chat/chat-post-message",
+            {
+                chat_id: chat_id.value,
+                message: textarea.value
+            }
+        )
+        if (res.data.code === 0) {
+            messages.value = res.data.data;
+            textarea.value = "";
+            get_message();
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+onMounted(() => {
+    get_message();
+})
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-h3 {
-    margin: 40px 0 0;
+.centered-text {
+    text-align: center;
+    color: black;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
+.message-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    justify-content: space-between;
 }
 
-li {
-    display: inline-block;
-    margin: 0 10px;
+.bubble {
+    background-color: #e8e8e8;
+    color: #000;
+    padding: 10px;
+    border-radius: 5px;
 }
 
-a {
-    color: #42b983;
-}</style>
+.message {
+    text-align: left;
+    margin: 0;
+}
+</style>

@@ -2,13 +2,17 @@
     <div class="table-container">
         <img alt="Vue logo" src="../assets/logo.png" />
         <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+
+        <ChatModel />
     </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
+import { ref } from 'vue'
 import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
-
+import ChatModel from '@/components/ChatModel.vue'
+const visible = ref(false)
 @Options({
     components: {
         HelloWorld
