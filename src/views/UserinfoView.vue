@@ -1,11 +1,6 @@
 <template>
     <div class="table-container">
-        <el-input-group>
-            <el-input v-model="searchQuery" placeholder="Search by username" @input="debouncedHandleSearch"/>
-            <template #append>
-                <el-button icon="el-icon-search"/>
-            </template>
-        </el-input-group>
+        <el-input v-model="searchQuery" placeholder="Search by username" @input="debouncedHandleSearch"/>
         <el-table v-loading="loading" :data="users['records']" stripe style="width: 100%">
             <el-table-column prop="uid" label="Id"  width="280" />
             <el-table-column label="头像" width="280">

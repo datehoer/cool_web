@@ -29,7 +29,6 @@ import { getUsernameFromToken, getUserRolesFromToken } from '@/utils/parseJwt';
 import { useStore } from 'vuex';
 const store = useStore();
 const hover = ref(false);
-
 const router = useRouter();
 const route = useRoute();
 const activeTab = ref(route.name || 'home');
