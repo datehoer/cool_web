@@ -2,11 +2,10 @@
     <div class="hello">
         <div class="common-layout">
             <el-container>
-                <el-main :style="{ height: '800px', width: '100%', border: '2px solid #ccc'}">
+                <el-main :style="{ height: '800px', width: '100%', border: '2px solid #ccc' }">
                     <el-scrollbar height="800px">
                         <div
-                        class="message-container"
-                        v-for="(message, index) in messages" :key="index"
+                        class="message-container" v-for="(message, index) in messages" :key="index"
                             :class="get_message">
                             <div class="message-container">
                                 <div class="bubble">
@@ -28,8 +27,12 @@
                             placeholder="Please input" />
                     </el-col>
                     <el-col :span="6">
-                        <el-button type="primary" style="width: 42%; height: 100%;" plain @click="handleButtonSend">发送</el-button>
-                        <el-button type="danger" style="width: 42%; height: 100%;" plain @click="handleButtonClear">清空</el-button>
+                        <el-button
+                        type="primary" style="width: 42%; height: 100%;" plain
+                            @click="handleButtonSend">发送</el-button>
+                        <el-button
+                        type="danger" style="width: 42%; height: 100%;" plain
+                            @click="handleButtonClear">清空</el-button>
                     </el-col>
                 </el-row>
             </el-container>
@@ -40,13 +43,57 @@
 <script lang="ts" setup>
 import request from '@/utils/request';
 import { ref, onMounted } from 'vue';
-import MarkdownIt from 'markdown-it';
+import markdownit from 'markdown-it';
+import 'highlight.js/styles/default.css'; // 确保引入了highlight.js的样式文件
+import hljs from 'highlight.js';
 import { getChatIdFromToken } from '@/utils/parseJwt';
 const token = localStorage.getItem('token'); // 替换为实际的 token key
 const chat_id = getChatIdFromToken(token);
 const textarea = ref("");
 const messages = ref<any>([]);
-const md = new MarkdownIt();
+const md = markdownit({
+    // Enable HTML tags in source
+    html: true,
+
+    // Use '/' to close single tags (<br />).
+    // This is only for full CommonMark compatibility.
+    xhtmlOut: false,
+
+    // Convert '\n' in paragraphs into <br>
+    breaks: false,
+
+    // CSS language prefix for fenced blocks. Can be
+    // useful for external highlighters.
+    langPrefix: 'language-',
+
+    // Autoconvert URL-like text to links
+    linkify: true,
+
+    // Enable some language-neutral replacement + quotes beautification
+    // For the full list of replacements, see https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/replacements.mjs
+    typographer: true,
+
+    // Double + single quotes replacement pairs, when typographer enabled,
+    // and smartquotes on. Could be either a String or an Array.
+    //
+    // For example, you can use '«»„“' for Russian, '„“‚‘' for German,
+    // and ['«\xA0', '\xA0»', '‹\xA0', '\xA0›'] for French (including nbsp).
+    quotes: '“”‘’',
+
+    // Highlighter function. Should return escaped HTML,
+    // or '' if the source string is not changed and should be escaped externally.
+    // If result starts with <pre... internal wrapper is skipped.
+    highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return hljs.highlight(str, { language: lang }).value;
+            } catch (__) {}
+        }
+
+        return ''; // use external default escaping
+    }
+});
+
 const parseMarkdown = (markdownText) => {
     return md.render(markdownText);
 };
@@ -83,11 +130,11 @@ const handleButtonSend = async () => {
 }
 const handleButtonClear = async () => {
     try {
-        const res = await request.delete("/chat/chat-delete-message",{
-                params: {
-                    chat_id: chat_id
-                }
+        const res = await request.delete("/chat/chat-delete-message", {
+            params: {
+                chat_id: chat_id
             }
+        }
         )
         if (res.data.code === 1) {
             messages.value = res.data.data;
@@ -128,7 +175,8 @@ onMounted(() => {
     padding: 1px 10px;
     margin: 0;
 }
-.el-container{
+
+.el-container {
     flex-wrap: wrap;
 }
 </style>
