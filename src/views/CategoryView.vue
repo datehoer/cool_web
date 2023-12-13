@@ -71,8 +71,8 @@ const fetchCategory = async () => {
                 typeId: productId
             }
         }); // 使用您的 API 路径
-        brands.value = response.data.records;
-        total.value = response.data.total;
+        brands.value = response.data.data.records;
+        total.value = response.data.data.total;
 
         // 获取 ID 数组
         const ids = brands.value.map((brand: any) => brand.id);
@@ -80,7 +80,7 @@ const fetchCategory = async () => {
         // 构造自定义查询字符串
         const query = ids.map(id => `ids=${encodeURIComponent(id)}`).join('&');
         const msgCounts = await request.get(`/api/msg-count?${query}`)
-        const msgCountsData = msgCounts.data;
+        const msgCountsData = msgCounts.data.data;
         brands.value.forEach((brand: any) => {
             brand.msgCount = msgCountsData[brand.id] || 0;
         });

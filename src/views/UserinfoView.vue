@@ -61,8 +61,8 @@ const getUsers = (search = searchQuery.value) => {
             }
         })
         .then((response) => {
-            users.value = response.data
-            pageSize.value = response.data.size
+            users.value = response.data.data
+            pageSize.value = response.data.data.size
             console.log(users.value) // optional: log the retrieved data to the console
         })
         .catch((error) => {

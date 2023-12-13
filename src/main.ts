@@ -12,7 +12,7 @@ router.beforeEach(async (to, from, next) => {
     if (sessionStorage.getItem("notified") !== "true" && to.path !== '/login') {
         try {
             const response = await request.get('/task/task_info/tips');
-            const data = response.data;
+            const data = response.data.data;
             for (const task in data) {
                 ElNotification({
                     dangerouslyUseHTMLString: true,

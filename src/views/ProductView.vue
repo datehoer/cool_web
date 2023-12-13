@@ -53,9 +53,9 @@ const fetchProduct = async () => {
                     limit: pageSize.value
                 }
             });
-        product.value = response.data.records;
-        total.value = response.data.total;
-        pageSize.value = response.data.size;
+        product.value = response.data.data.records;
+        total.value = response.data.data.total;
+        pageSize.value = response.data.data.size;
     } catch (error) {
         console.error(error);
     } finally {

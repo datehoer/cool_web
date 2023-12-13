@@ -51,8 +51,8 @@ const fetchMsg = async () => {
                 tid: categoryId,
             }
         })
-        msgs.value = res.data.records;
-        total.value = res.data.total;
+        msgs.value = res.data.data.records;
+        total.value = res.data.data.total;
     } catch (e) {
         console.log(e);
     } finally {

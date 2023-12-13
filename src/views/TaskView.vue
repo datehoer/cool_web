@@ -98,9 +98,9 @@ const fetchProduct = async () => {
                     limit: pageSize.value
                 }
             });
-        task.value = response.data.records;
-        total.value = response.data.total;
-        pageSize.value = response.data.size;
+        task.value = response.data.data.records;
+        total.value = response.data.data.total;
+        pageSize.value = response.data.data.size;
     } catch (error) {
         console.error(error);
     } finally {
@@ -137,7 +137,7 @@ const fetchCategories = debounce(async (queryString: string, callback: Function)
             const response = await request.get('/api/category-name', {
                 params: { name: queryString }
             });
-            const formattedData = Object.entries(response.data).map(([name, productId]) => {
+            const formattedData = Object.entries(response.data.data).map(([name, productId]) => {
                 return { value: name, productId: productId };
             });
             searchResults.value = formattedData;
