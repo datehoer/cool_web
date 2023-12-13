@@ -2,11 +2,8 @@
     <div class="hello">
         <div class="common-layout">
             <el-container>
-                <el-header :style="{ height: '50px', width: '400px', backgroundColor: '#87CEEB' }">
-                    <p class="centered-text">CoolGPT</p>
-                </el-header>
-                <el-main :style="{ height: '600px', width: '400px', border: '2px solid #ccc' }">
-                    <el-scrollbar height="600px">
+                <el-main :style="{ height: '800px', width: '100%', border: '2px solid #ccc'}">
+                    <el-scrollbar height="800px">
                         <div
                         class="message-container"
                         v-for="(message, index) in messages" :key="index"
@@ -24,7 +21,7 @@
                         </div>
                     </el-scrollbar>
                 </el-main>
-                <el-row :style="{ width: '400px' }" :gutter="20">
+                <el-row :style="{ width: '100%' }" :gutter="20">
                     <el-col :span="18">
                         <el-input
                         v-model="textarea" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
@@ -130,5 +127,8 @@ onMounted(() => {
     text-align: left;
     padding: 1px 10px;
     margin: 0;
+}
+.el-container{
+    flex-wrap: wrap;
 }
 </style>
