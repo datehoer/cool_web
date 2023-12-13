@@ -24,33 +24,21 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/login',
         name: 'login',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: Login
     },
     {
         path: '/register',
         name: 'register',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: Register
     },
     {
         path: '/forget',
         name: 'forget',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: Forget
     },
     {
         path: '/about',
         name: 'about',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
         meta: {
             requiresAuth: true,
@@ -60,9 +48,6 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/userinfo',
         name: 'userinfo',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: UserinfoView,
         meta: {
             requiresAuth: true,
@@ -72,9 +57,6 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/product',
         name: 'product',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: ProductView,
         meta: {
             requiresAuth: true,
@@ -84,9 +66,6 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/brands/:productId',
         name: 'brands',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: Brands,
         beforeEnter: (to, from, next) => {
             console.log('Navigating to brands...');
@@ -100,9 +79,6 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/category/:brandId&:productId',
         name: 'category',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: Category,
         meta: {
             requiresAuth: true,
@@ -112,9 +88,6 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/msg/:categoryId',
         name: 'msg',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: Msg,
         meta: {
             requiresAuth: true,
@@ -124,9 +97,6 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/task',
         name: 'task',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: Task,
         meta: {
             requiresAuth: true,
@@ -136,9 +106,6 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/taskResult/:taskId',
         name: 'taskResult',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: TaskResult,
         meta: {
             requiresAuth: true,

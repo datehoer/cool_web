@@ -34,7 +34,6 @@ if (token) {
 }
 
 app.use(ElementPlus)
-
 app.use(store)
 app.use(router)
 app.mount('#app')

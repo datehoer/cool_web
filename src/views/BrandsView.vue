@@ -56,7 +56,7 @@ const fetchBrands = async () => {
                 typeId: productId
             }
         }); // 使用您的 API 路径
-        brands.value = response.data.data.records; // 假设响应结构是 { data: { records: [], ... } }
+        brands.value = response.data.data.records;
         total.value = response.data.data.total;
     } catch (error) {
         console.error(error);

@@ -50,7 +50,7 @@ watch(() => route.name, (newRouteName) => {
     }
 });
 watch(activeTab, (newTab) => {
-    if (canAccessPage(newTab) && newTab !== route.name) {
+    if (canAccessPage(newTab)) {
         router.push({ name: newTab });
     }else{
         router.push({ name: 'home' });
@@ -65,16 +65,14 @@ const logout = () => {
 function canAccessPage(pageName) {
     const route = router.getRoutes().find(r => r.name === pageName);
     if (!route) return false;
-
     const userRoles = getUserRolesFromToken(localStorage.getItem('token'));
     if (route.meta && route.meta.requiresAuth) {
-        // 如果路由需要认证
         if (!userRoles) return false;
         if (route.meta.roles.some(role => userRoles.includes(role))) {
             return true;
         }
     }
-    return false; // 默认返回 false
+    return false;
 }
 </script>
 
