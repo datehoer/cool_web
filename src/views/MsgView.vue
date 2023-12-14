@@ -17,6 +17,13 @@
                     {{ formatTime(scope.row.createTime) }}
                 </template>
             </el-table-column>
+            <el-table-column label="操作" width="120">
+                <template #default="scope">
+                    <el-button text @click="changeGridData(scope.row.message, scope.row.idAsString, scope.row.analyzeMessage)">
+                        分析数据
+                    </el-button>
+                </template>
+            </el-table-column>
         </el-table>
         <div class="pagination-container">
             <el-pagination
@@ -27,6 +34,17 @@
                 @current-change="handleCurrentChange"
             />
         </div>
+        <el-dialog
+            v-model="dialogTableVisible"
+            title="Shipping address">
+            <h1>数据：{{ messages }}</h1>
+            <h1
+                v-loading="isAnalyzing"
+                element-loading-text="Loading..."
+            >
+                解析数据：{{ analyzeMsg }}
+            </h1>
+        </el-dialog>
     </div>
 </template>
 
@@ -42,6 +60,10 @@ const pageSize = ref(10); // 每页显示条目数
 const total = ref(0); // 总数据条数
 const page = ref(1); // 当前页码
 const categoryId = route.params.categoryId;
+const dialogTableVisible = ref(false)
+const messages = ref<string>("");
+const analyzeMsg = ref<string>("");
+const isAnalyzing  = ref<boolean>(false);
 const fetchMsg = async () => {
     try {
         const res = await request.get("/api/msg", {
@@ -66,6 +88,36 @@ const handleCurrentChange = (val: number) => {
     page.value = val;
     fetchMsg();
 };
+const analyzeContent = async (msg, id) => {
+    try {
+        const res = await request.post("/chat/chat-analyze-chat-data", {
+            message: msg,
+            id: id
+        })
+        if (res.data.code === 1) {
+            if (analyzeMsg.value == null){
+                analyzeMsg.value = res.data.data;
+                isAnalyzing.value = false;
+            }
+            fetchMsg();
+        }
+    } catch (e) {
+        console.log(e);
+    } finally {
+        loading.value = false;
+    }
+}
+const changeGridData = async (msg: string, msgId, analyzeMessage) => {
+    isAnalyzing.value = true;
+    messages.value = msg;
+    analyzeMsg.value = analyzeMessage;
+    dialogTableVisible.value = true
+    if (analyzeMsg.value == null){
+        await analyzeContent(msg, msgId)
+    }else {
+        isAnalyzing.value = false;
+    }
+}
 const formatTime = (timeStamp: number) => {
     const date = new Date(timeStamp * 1000);
     const year = date.getFullYear();
@@ -83,7 +135,7 @@ onMounted(() => {
 <style scoped>
 .table-container {
     width: 100%;
-    max-width: 1440px; /* 调整为适合您的布局宽度 */
+    max-width: 1560px; /* 调整为适合您的布局宽度 */
     margin: 0 auto;
     background: #ffffff;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
