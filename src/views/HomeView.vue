@@ -70,6 +70,8 @@ import { ref } from 'vue';
 let echart = echarts;
 const messageAllCount = ref([{}])
 const messageTodayCount = ref([{}])
+const monthStatisticsText = ref([]);
+const monthStatisticsCount = ref([]);
 const fetchAllCount = async () => {
     try {
         const response = await request.get('/api/messageCount'); // 使用您的 API 路径
@@ -105,7 +107,19 @@ const fetchTodayCount = async () => {
     } finally {
     }
 };
-
+const fetchMonthStatistics = async () => {
+    try {
+        const response = await request.get('/api/monthStatistics'); // 使用您的 API 路径
+        let responseData = response.data;
+        if (responseData && responseData.code === 1) {
+            monthStatisticsText.value = responseData.data.map(item => `${item.year}年${item.month}月`);
+            monthStatisticsCount.value = responseData.data.map(item => item.messageCount);
+        }
+    } catch (error) {
+        console.error(error);
+    } finally {
+    }
+};
 const tableData = [
     {
         date: '品牌数',
@@ -129,14 +143,7 @@ const initChart = () => {
     monthCount.setOption({
         xAxis: {
             type: "category",
-            data: [
-                "七月",
-                "八月",
-                "九月",
-                "十月",
-                "十一月",
-                "十二月"
-            ]
+            data: [...monthStatisticsText.value].reverse()
         },
         tooltip: {
             trigger: "axis"
@@ -146,14 +153,7 @@ const initChart = () => {
         },
         series: [
             {
-                data: [
-                    1320,
-                    801,
-                    102,
-                    230,
-                    4321,
-                    4129
-                ],
+                data: [...monthStatisticsCount.value].reverse(),
                 type: "line",
                 smooth: true
             }
@@ -234,9 +234,10 @@ const initChart = () => {
         topFiveCount.resize();
     };
 }
-onMounted(() => {
-    fetchAllCount();
-    fetchTodayCount();
+onMounted(async () => {
+    await fetchAllCount();
+    await fetchTodayCount();
+    await fetchMonthStatistics();
     initChart();
 });
 </script>
