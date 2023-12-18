@@ -1,26 +1,223 @@
 <template>
-    <div class="table-container">
-        <div class="block text-center">
-            <span class="demonstration">Switch when indicator is clicked</span>
-            <el-carousel height="150px">
-                <el-carousel-item v-for="key in imagesPath" :key="key">
-                    <el-image :src="key" fit="contain" style="width: 100%; height: 100%" />
-                </el-carousel-item>
-            </el-carousel>
-        </div>
-        <el-dialog v-model="dialogVisible" title="CoolGPT" width="30%" draggable>
-            <ChatModel />
-        </el-dialog>
-    </div>
-    <el-button class="floating-button" type="primary" :icon="ChatLineRound" @click="dialogVisible = true" size="large" />
+    <el-row :gutter="20">
+        <el-col :span="8">
+            <div class="grid-content ep-bg-purple">
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <div class="grid-content ep-bg-purple">
+                            消息总数
+                            <el-table :data="tableData" style="width: 100%;height: 200px;">
+                                <el-table-column prop="date" label="平台" width="180" />
+                                <el-table-column prop="name" label="数量" width="180" />
+                            </el-table>
+                        </div>
+                    </el-col>
+                    <el-col :span="12">
+                        <div class="grid-content ep-bg-purple">
+                            今日消息数
+                            <el-table :data="tableData" style="width: 100%;height: 200px;">
+                                <el-table-column prop="date" label="平台" width="180" />
+                                <el-table-column prop="name" label="数量" width="180" />
+                            </el-table>
+                        </div>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="24">
+                        <div class="grid-content ep-bg-purple">
+                            任务监控
+                            <el-table :data="tableData" height="250" style="width: 100%;height: 300px;">
+                                <el-table-column prop="date" label="Date" width="180" />
+                                <el-table-column prop="name" label="Name" width="180" />
+                                <el-table-column prop="address" label="Address" />
+                            </el-table>
+                        </div>
+                    </el-col>
+                </el-row>
+            </div>
+        </el-col>
+        <el-col :span="16">
+            <div class="grid-content ep-bg-purple">
+                月度统计
+                <div id="monthCount" :style="{ width: '100%', height: '600px' }">
+                </div>
+            </div>
+        </el-col>
+    </el-row>
+    <el-row :gutter="20">
+        <el-col :span="12">
+            <div class="grid-content ep-bg-purple">
+                活跃5用户
+                <div id="ActiveUsers" :style="{ width: '100%', height: '300px' }">
+                </div>
+            </div>
+        </el-col>
+        <el-col :span="12">
+            <div class="grid-content ep-bg-purple">
+                前五型号
+                <div id="TopFiveCount" :style="{ width: '100%', height: '300px' }">
+                </div>
+            </div>
+        </el-col>
+    </el-row>
 </template>
 
 <script lang="ts" setup>
-import { ChatLineRound } from '@element-plus/icons-vue'
-import { ref } from 'vue'
-import ChatModel from '@/components/ChatModel.vue';
-const dialogVisible = ref(false)
-const imagesPath = ["https://s2.loli.net/2023/12/14/eWEcB3uA9R5DzUy.png", "https://s2.loli.net/2023/12/14/X4hDavyJVPWtumB.png", "https://s2.loli.net/2023/12/14/4k8rRAvBbuS7D3U.png"]
+import * as echarts from "echarts";
+import { onMounted } from 'vue';
+import { ref } from 'vue';
+let echart = echarts;
+interface User {
+  date: string
+  name: string
+}
+
+const tableRowClassName = ({
+  row,
+  rowIndex,
+}: {
+  row: User
+  rowIndex: number
+}) => {
+  if (rowIndex === 1) {
+    return 'warning-row'
+  } else if (rowIndex === 3) {
+    return 'success-row'
+  }
+  return ''
+}
+
+const tableData: User[] = [
+    {
+        date: '品牌数',
+        name: '100',
+    },
+    {
+        date: '消息数',
+        name: '300',
+    },
+    {
+        date: '敏感消息数',
+        name: '10',
+    },
+    {
+        date: '用户数',
+        name: '120',
+    }
+]
+const initChart = () => {
+    let monthCount = echart.init(document.getElementById("monthCount"));
+    monthCount.setOption({
+        xAxis: {
+            type: "category",
+            data: [
+                "七月",
+                "八月",
+                "九月",
+                "十月",
+                "十一月",
+                "十二月"
+            ]
+        },
+        tooltip: {
+            trigger: "axis"
+        },
+        yAxis: {
+            type: "value"
+        },
+        series: [
+            {
+                data: [
+                    1320,
+                    801,
+                    102,
+                    230,
+                    4321,
+                    4129
+                ],
+                type: "line",
+                smooth: true
+            }
+        ]
+    });
+    let topFiveCount = echart.init(document.getElementById("TopFiveCount"));
+    topFiveCount.setOption({
+        title: {
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+
+        series: [
+            {
+                name: 'Access From',
+                type: 'pie',
+                radius: '50%',
+                data: [
+                    { value: 1048, name: 'Search Engine' },
+                    { value: 735, name: 'Direct' },
+                    { value: 580, name: 'Email' },
+                    { value: 484, name: 'Union Ads' },
+                    { value: 300, name: 'Video Ads' }
+                ],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    });
+    let activeUsers = echart.init(document.getElementById("ActiveUsers"));
+    activeUsers.setOption({
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                axisTick: {
+                    alignWithLabel: true
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value'
+            }
+        ],
+        series: [
+            {
+                name: 'Direct',
+                type: 'bar',
+                barWidth: '60%',
+                data: [10, 52, 200, 334, 390, 330, 220]
+            }
+        ]
+    });
+    window.onresize = function () {
+        //自适应大小
+        activeUsers.resize();
+        monthCount.resize();
+        topFiveCount.resize();
+    };
+}
+onMounted(() => {
+    initChart();
+});
 </script>
 <style scoped>
 html,
@@ -32,38 +229,21 @@ body {
     /* 防止出现滚动条 */
 }
 
-.table-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.el-row {
+    margin-bottom: 20px;
 }
 
-.floating-button {
-    position: fixed;
-    right: 20px;
-    /* 可根据需要调整距离右侧的距离 */
-    bottom: 20px;
-    /* 可根据需要调整距离底部的距离 */
-    z-index: 1000;
-    /* 确保在其他内容之上 */
+.el-row:last-child {
+    margin-bottom: 0;
 }
 
-.demonstration {
-    color: var(--el-text-color-secondary);
+.el-col {
+    border-radius: 4px;
 }
 
-.el-carousel__item h3 {
-    color: #475669;
-    opacity: 0.75;
-    line-height: 150px;
-    margin: 0;
-    text-align: center;
+.grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+    border: 1px solid #ebf4f5;
 }
-
-.el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-}
-
-.el-carousel__item:nth-child(2n + 1) {
-    background-color: #d3dce6;
-}</style>
+</style>

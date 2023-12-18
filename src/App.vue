@@ -1,9 +1,9 @@
 <template>
     <TopBar v-if="isLoggedIn" />
-    <el-dialog v-model="dialogVisible" title="CoolGPT" width="30%" draggable>
+    <el-dialog v-if="isLoggedIn" v-model="dialogVisible" title="CoolGPT" width="30%" draggable>
         <ChatModel/>
     </el-dialog>
-    <el-button class="floating-button" type="primary" :icon="ChatLineRound" @click="dialogVisible = true" size="large"/>
+    <el-button v-if="isLoggedIn" class="floating-button" type="primary" :icon="ChatLineRound" @click="dialogVisible = true" size="large"/>
     <router-view />
 </template>
 
