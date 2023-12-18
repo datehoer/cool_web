@@ -6,7 +6,7 @@
                     <el-col :span="12">
                         <div class="grid-content ep-bg-purple">
                             消息总数
-                            <el-table :data="tableData" style="width: 100%;height: 200px;">
+                            <el-table :data="messageAllCount" style="width: 100%;height: 200px;">
                                 <el-table-column prop="date" label="平台" width="180" />
                                 <el-table-column prop="name" label="数量" width="180" />
                             </el-table>
@@ -15,7 +15,7 @@
                     <el-col :span="12">
                         <div class="grid-content ep-bg-purple">
                             今日消息数
-                            <el-table :data="tableData" style="width: 100%;height: 200px;">
+                            <el-table :data="messageTodayCount" style="width: 100%;height: 200px;">
                                 <el-table-column prop="date" label="平台" width="180" />
                                 <el-table-column prop="name" label="数量" width="180" />
                             </el-table>
@@ -64,30 +64,49 @@
 
 <script lang="ts" setup>
 import * as echarts from "echarts";
+import request from '@/utils/request'; // 引入封装的 request 实例
 import { onMounted } from 'vue';
 import { ref } from 'vue';
 let echart = echarts;
-interface User {
-  date: string
-  name: string
-}
+const messageAllCount = ref([{}])
+const messageTodayCount = ref([{}])
+const fetchAllCount = async () => {
+    try {
+        const response = await request.get('/api/messageCount'); // 使用您的 API 路径
+        let responseData = response.data;
+        if (responseData && responseData.code === 1) {
+            let transformedData = [
+                { date: '用户数', name: String(responseData.data.userCount) },
+                { date: '敏感消息数', name: String(responseData.data.sensitiveCount) },
+                { date: '消息数', name: String(responseData.data.msgCount) },
+                { date: '品牌数', name: String(responseData.data.productCount) }
+            ]
+            messageAllCount.value = transformedData;
+        }
+    } catch (error) {
+        console.error(error);
+    } finally {
+    }
+};
+const fetchTodayCount = async () => {
+    try {
+        const response = await request.get('/api/todayMessageCount'); // 使用您的 API 路径
+        let responseData = response.data;
+        if (responseData && responseData.code === 1) {
+            let transformedData = [
+                { date: '用户数', name: String(responseData.data.userTodayCount) },
+                { date: '敏感消息数', name: String(responseData.data.sensitiveTodayCount) },
+                { date: '消息数', name: String(responseData.data.msgTodayCount) },
+            ]
+            messageTodayCount.value = transformedData;
+        }
+    } catch (error) {
+        console.error(error);
+    } finally {
+    }
+};
 
-const tableRowClassName = ({
-  row,
-  rowIndex,
-}: {
-  row: User
-  rowIndex: number
-}) => {
-  if (rowIndex === 1) {
-    return 'warning-row'
-  } else if (rowIndex === 3) {
-    return 'success-row'
-  }
-  return ''
-}
-
-const tableData: User[] = [
+const tableData = [
     {
         date: '品牌数',
         name: '100',
@@ -216,6 +235,8 @@ const initChart = () => {
     };
 }
 onMounted(() => {
+    fetchAllCount();
+    fetchTodayCount();
     initChart();
 });
 </script>
