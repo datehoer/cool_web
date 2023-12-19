@@ -6,7 +6,7 @@
                     <el-col :span="12">
                         <div class="grid-content ep-bg-purple">
                             消息总数
-                            <el-table :data="messageAllCount" style="width: 100%;height: 200px;">
+                            <el-table :data="messageAllCount" style="width: 100%; height: 200px">
                                 <el-table-column prop="date" label="平台" width="180" />
                                 <el-table-column prop="name" label="数量" width="180" />
                             </el-table>
@@ -15,7 +15,7 @@
                     <el-col :span="12">
                         <div class="grid-content ep-bg-purple">
                             今日消息数
-                            <el-table :data="messageTodayCount" style="width: 100%;height: 200px;">
+                            <el-table :data="messageTodayCount" style="width: 100%; height: 200px">
                                 <el-table-column prop="date" label="平台" width="180" />
                                 <el-table-column prop="name" label="数量" width="180" />
                             </el-table>
@@ -25,12 +25,8 @@
                 <el-row :gutter="20">
                     <el-col :span="24">
                         <div class="grid-content ep-bg-purple">
-                            任务监控
-                            <el-table :data="tableData" height="250" style="width: 100%;height: 300px;">
-                                <el-table-column prop="date" label="Date" width="180" />
-                                <el-table-column prop="name" label="Name" width="180" />
-                                <el-table-column prop="address" label="Address" />
-                            </el-table>
+                            前五型号
+                            <div id="TopFiveCount" :style="{ width: '100%', height: '300px' }"></div>
                         </div>
                     </el-col>
                 </el-row>
@@ -39,24 +35,35 @@
         <el-col :span="16">
             <div class="grid-content ep-bg-purple">
                 月度统计
-                <div id="monthCount" :style="{ width: '100%', height: '600px' }">
-                </div>
+                <div id="monthCount" :style="{ width: '100%', height: '600px' }"></div>
             </div>
         </el-col>
     </el-row>
     <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="6">
             <div class="grid-content ep-bg-purple">
                 活跃5用户
-                <div id="ActiveUsers" :style="{ width: '100%', height: '300px' }">
-                </div>
+                <el-table :data="activityUser" height="250" style="width: 100%; height: 300px">
+                    <el-table-column label="头像" width="180">
+                        <template #default="scope">
+                            <img
+                            referrer="no-referrer|origin|unsafe-url" referrerPolicy="no-referrer"
+                                :src="scope.row.SmallAvatar" alt="User Image" style="width: 50px; height: 50px" />
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="name" label="名称" width="180" />
+                    <el-table-column prop="activitySource" label="活跃度" width="180" />
+                </el-table>
             </div>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="18">
             <div class="grid-content ep-bg-purple">
-                前五型号
-                <div id="TopFiveCount" :style="{ width: '100%', height: '300px' }">
-                </div>
+                任务监控
+                <el-table :data="tableData" height="250" style="width: 100%; height: 300px">
+                    <el-table-column prop="date" label="Date" width="180" />
+                    <el-table-column prop="name" label="Name" width="180" />
+                    <el-table-column prop="address" label="Address" />
+                </el-table>
             </div>
         </el-col>
     </el-row>
@@ -64,25 +71,26 @@
 
 <script lang="ts" setup>
 import * as echarts from "echarts";
-import request from '@/utils/request'; // 引入封装的 request 实例
-import { onMounted } from 'vue';
-import { ref } from 'vue';
+import request from "@/utils/request"; // 引入封装的 request 实例
+import { onMounted } from "vue";
+import { ref } from "vue";
 let echart = echarts;
-const messageAllCount = ref([{}])
-const messageTodayCount = ref([{}])
+const messageAllCount = ref([{}]);
+const messageTodayCount = ref([{}]);
 const monthStatisticsText = ref([]);
 const monthStatisticsCount = ref([]);
+const activityUser = ref([{}]);
 const fetchAllCount = async () => {
     try {
-        const response = await request.get('/api/messageCount'); // 使用您的 API 路径
+        const response = await request.get("/api/messageCount"); // 使用您的 API 路径
         let responseData = response.data;
         if (responseData && responseData.code === 1) {
             let transformedData = [
-                { date: '用户数', name: String(responseData.data.userCount) },
-                { date: '敏感消息数', name: String(responseData.data.sensitiveCount) },
-                { date: '消息数', name: String(responseData.data.msgCount) },
-                { date: '品牌数', name: String(responseData.data.productCount) }
-            ]
+                { date: "用户数", name: String(responseData.data.userCount) },
+                { date: "敏感消息数", name: String(responseData.data.sensitiveCount) },
+                { date: "消息数", name: String(responseData.data.msgCount) },
+                { date: "品牌数", name: String(responseData.data.productCount) },
+            ];
             messageAllCount.value = transformedData;
         }
     } catch (error) {
@@ -92,14 +100,17 @@ const fetchAllCount = async () => {
 };
 const fetchTodayCount = async () => {
     try {
-        const response = await request.get('/api/todayMessageCount'); // 使用您的 API 路径
+        const response = await request.get("/api/todayMessageCount"); // 使用您的 API 路径
         let responseData = response.data;
         if (responseData && responseData.code === 1) {
             let transformedData = [
-                { date: '用户数', name: String(responseData.data.userTodayCount) },
-                { date: '敏感消息数', name: String(responseData.data.sensitiveTodayCount) },
-                { date: '消息数', name: String(responseData.data.msgTodayCount) },
-            ]
+                { date: "用户数", name: String(responseData.data.userTodayCount) },
+                {
+                    date: "敏感消息数",
+                    name: String(responseData.data.sensitiveTodayCount),
+                },
+                { date: "消息数", name: String(responseData.data.msgTodayCount) },
+            ];
             messageTodayCount.value = transformedData;
         }
     } catch (error) {
@@ -109,11 +120,32 @@ const fetchTodayCount = async () => {
 };
 const fetchMonthStatistics = async () => {
     try {
-        const response = await request.get('/api/monthStatistics'); // 使用您的 API 路径
+        const response = await request.get("/api/monthStatistics"); // 使用您的 API 路径
         let responseData = response.data;
         if (responseData && responseData.code === 1) {
-            monthStatisticsText.value = responseData.data.map(item => `${item.year}年${item.month}月`);
-            monthStatisticsCount.value = responseData.data.map(item => item.messageCount);
+            monthStatisticsText.value = responseData.data.map(
+                (item) => `${item.year}年${item.month}月`
+            );
+            monthStatisticsCount.value = responseData.data.map(
+                (item) => item.messageCount
+            );
+        }
+    } catch (error) {
+        console.error(error);
+    } finally {
+    }
+};
+const fetchActivityUser = async () => {
+    try {
+        const response = await request.get("/api/activeUser"); // 使用您的 API 路径
+        let responseData = response.data;
+        if (responseData && responseData.code === 1) {
+            let transformedData = responseData.data.map((item) => ({
+                name: item.username,
+                activitySource: item.activitySource,
+                SmallAvatar: item.userSmallAvatar,
+            }));
+            activityUser.value = transformedData;
         }
     } catch (error) {
         console.error(error);
@@ -122,122 +154,85 @@ const fetchMonthStatistics = async () => {
 };
 const tableData = [
     {
-        date: '品牌数',
-        name: '100',
+        date: "品牌数",
+        name: "100",
     },
     {
-        date: '消息数',
-        name: '300',
+        date: "消息数",
+        name: "300",
     },
     {
-        date: '敏感消息数',
-        name: '10',
+        date: "敏感消息数",
+        name: "10",
     },
     {
-        date: '用户数',
-        name: '120',
-    }
-]
+        date: "用户数",
+        name: "120",
+    },
+];
 const initChart = () => {
     let monthCount = echart.init(document.getElementById("monthCount"));
     monthCount.setOption({
         xAxis: {
             type: "category",
-            data: [...monthStatisticsText.value].reverse()
+            data: [...monthStatisticsText.value].reverse(),
         },
         tooltip: {
-            trigger: "axis"
+            trigger: "axis",
         },
         yAxis: {
-            type: "value"
+            type: "value",
         },
         series: [
             {
                 data: [...monthStatisticsCount.value].reverse(),
                 type: "line",
-                smooth: true
-            }
-        ]
+                smooth: true,
+            },
+        ],
     });
     let topFiveCount = echart.init(document.getElementById("TopFiveCount"));
     topFiveCount.setOption({
         title: {
-            left: 'center'
+            left: "center",
         },
         tooltip: {
-            trigger: 'item'
+            trigger: "item",
         },
 
         series: [
             {
-                name: 'Access From',
-                type: 'pie',
-                radius: '50%',
+                name: "Access From",
+                type: "pie",
+                radius: "50%",
                 data: [
-                    { value: 1048, name: 'Search Engine' },
-                    { value: 735, name: 'Direct' },
-                    { value: 580, name: 'Email' },
-                    { value: 484, name: 'Union Ads' },
-                    { value: 300, name: 'Video Ads' }
+                    { value: 1048, name: "Search Engine" },
+                    { value: 735, name: "Direct" },
+                    { value: 580, name: "Email" },
+                    { value: 484, name: "Union Ads" },
+                    { value: 300, name: "Video Ads" },
                 ],
                 emphasis: {
                     itemStyle: {
                         shadowBlur: 10,
                         shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
-            }
-        ]
-    });
-    let activeUsers = echart.init(document.getElementById("ActiveUsers"));
-    activeUsers.setOption({
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: [
-            {
-                type: 'category',
-                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                axisTick: {
-                    alignWithLabel: true
-                }
-            }
+                        shadowColor: "rgba(0, 0, 0, 0.5)",
+                    },
+                },
+            },
         ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: 'Direct',
-                type: 'bar',
-                barWidth: '60%',
-                data: [10, 52, 200, 334, 390, 330, 220]
-            }
-        ]
     });
     window.onresize = function () {
         //自适应大小
-        activeUsers.resize();
         monthCount.resize();
         topFiveCount.resize();
     };
-}
+};
 onMounted(async () => {
     await fetchAllCount();
     await fetchTodayCount();
     await fetchMonthStatistics();
+    await fetchActivityUser();
     initChart();
 });
 </script>
