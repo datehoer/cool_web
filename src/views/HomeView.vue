@@ -42,13 +42,17 @@
     <el-row :gutter="20">
         <el-col :span="6">
             <div class="grid-content ep-bg-purple">
-                活跃5用户
-                <el-table :data="activityUser" height="250" style="width: 100%; height: 300px">
+                活跃10用户
+                <el-table :data="activityUser" height="300" style="width: 100%; height: 300px">
                     <el-table-column label="头像" width="180">
                         <template #default="scope">
                             <img
-                            referrer="no-referrer|origin|unsafe-url" referrerPolicy="no-referrer"
-                                :src="scope.row.SmallAvatar" alt="User Image" style="width: 50px; height: 50px" />
+                                referrer="no-referrer|origin|unsafe-url"
+                                referrerPolicy="no-referrer"
+                                :src="scope.row.SmallAvatar"
+                                alt="User Image"
+                                style="width: 50px; height: 50px"
+                            />
                         </template>
                     </el-table-column>
                     <el-table-column prop="name" label="名称" width="180" />
@@ -59,11 +63,15 @@
         <el-col :span="18">
             <div class="grid-content ep-bg-purple">
                 任务监控
-                <el-table :data="tableData" height="250" style="width: 100%; height: 300px">
-                    <el-table-column prop="date" label="Date" width="180" />
-                    <el-table-column prop="name" label="Name" width="180" />
-                    <el-table-column prop="address" label="Address" />
+                <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                    <el-table :data="task" stripe style="width: 100%">
+                    <el-table-column prop="id" label="Id" width="200" />
+                    <el-table-column prop="keyword" label="keyword" width="250" />
+                    <el-table-column prop="productName" label="关注商品名称" width="380" />
+                    <el-table-column prop="productDelay" label="延时" width="380" />
+                    <el-table-column prop="taskStatus" label="任务状态" width="380" />
                 </el-table>
+                </ul>
             </div>
         </el-col>
     </el-row>
@@ -81,6 +89,11 @@ const monthStatisticsText = ref([]);
 const monthStatisticsCount = ref([]);
 const activityUser = ref([{}]);
 const top5Brands = ref([{}]);
+const task = ref<any>([]);
+const pageSize = ref(10);
+const total = ref(0);
+const page = ref(1);
+let loading = ref(false);
 const fetchAllCount = async () => {
     try {
         const response = await request.get("/api/messageCount"); // 使用您的 API 路径
@@ -238,12 +251,43 @@ const initChart = () => {
         topFiveCount.resize();
     };
 };
+const load = async () => {
+    if (loading.value || task.value.length >= total.value) {
+        // 如果正在加载或已加载全部数据，则不再加载
+        return;
+    }
+    loading.value = true;  // 设置加载状态为true
+    page.value++;  // 增加页码
+    try {
+        await fetchTaskInfo();  // 调用获取数据的函数
+    } catch (error) {
+        console.error(error);
+    } finally {
+        loading.value = false;  // 加载完成后设置加载状态为false
+    }
+};
+const fetchTaskInfo = async () => {
+    try {
+        const response = await request.get('/task/task_info',
+            {
+                params: {
+                    page: page.value,
+                    limit: pageSize.value
+                }
+            });
+        task.value = [...task.value, ...response.data.data.records];
+        total.value = response.data.data.total;
+    } catch (error) {
+        console.error(error);
+    }
+};
 onMounted(async () => {
     await fetchAllCount();
     await fetchTodayCount();
     await fetchMonthStatistics();
     await fetchActivityUser();
     await fetchTop5Brand();
+    await fetchTaskInfo();
     initChart();
 });
 </script>
@@ -273,5 +317,26 @@ body {
     border-radius: 4px;
     min-height: 36px;
     border: 1px solid #ebf4f5;
+}
+
+.infinite-list {
+    height: 300px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.infinite-list .infinite-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    background: var(--el-color-primary-light-9);
+    margin: 10px;
+    color: var(--el-color-primary);
+}
+
+.infinite-list .infinite-list-item+.list-item {
+    margin-top: 10px;
 }
 </style>

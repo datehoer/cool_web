@@ -88,7 +88,7 @@ const rules = reactive<FormRules>({
         { required: true, message: '请输入监控时间', trigger: 'blur' },
     ],
 })
-const fetchProduct = async () => {
+const fetchTaskInfo = async () => {
     loading.value = true;
     try {
         const response = await request.get('/task/task_info',
@@ -123,7 +123,7 @@ const save = async (formEl: FormInstance | undefined) => {
                 console.log(e);
             } finally {
                 dialogVisible.value = false
-                fetchProduct();
+                fetchTaskInfo();
             }
         } else {
             console.log('error submit!', fields)
@@ -154,18 +154,18 @@ const deleteTask = async (id: number) => {
     } catch (error) {
         console.error(error);
     } finally {
-        fetchProduct();
+        fetchTaskInfo();
     }
 };
 onMounted(() => {
-    fetchProduct();
+    fetchTaskInfo();
 });
 const handleSelect = (item: any) => {
     form.productId = item.productId;
 };
 const handleCurrentChange = (val: number) => {
     page.value = val
-    fetchProduct()
+    fetchTaskInfo()
 }
 const handleDelete = (row: any) => {
     console.log('删除任务', row);
