@@ -80,6 +80,7 @@ const messageTodayCount = ref([{}]);
 const monthStatisticsText = ref([]);
 const monthStatisticsCount = ref([]);
 const activityUser = ref([{}]);
+const top5Brands = ref([{}]);
 const fetchAllCount = async () => {
     try {
         const response = await request.get("/api/messageCount"); // 使用您的 API 路径
@@ -152,6 +153,22 @@ const fetchActivityUser = async () => {
     } finally {
     }
 };
+const fetchTop5Brand = async () => {
+    try {
+        const response = await request.get("/api/top5Brand"); // 使用您的 API 路径
+        let responseData = response.data;
+        if (responseData && responseData.code === 1) {
+            let transformedData = responseData.data.map((item) => ({
+                value: item.infoCount,
+                name: item.title,
+            }));
+            top5Brands.value = transformedData;
+        }
+    } catch (error) {
+        console.error(error);
+    } finally {
+    }
+};
 const tableData = [
     {
         date: "品牌数",
@@ -202,16 +219,9 @@ const initChart = () => {
 
         series: [
             {
-                name: "Access From",
                 type: "pie",
                 radius: "50%",
-                data: [
-                    { value: 1048, name: "Search Engine" },
-                    { value: 735, name: "Direct" },
-                    { value: 580, name: "Email" },
-                    { value: 484, name: "Union Ads" },
-                    { value: 300, name: "Video Ads" },
-                ],
+                data: top5Brands.value,
                 emphasis: {
                     itemStyle: {
                         shadowBlur: 10,
@@ -233,6 +243,7 @@ onMounted(async () => {
     await fetchTodayCount();
     await fetchMonthStatistics();
     await fetchActivityUser();
+    await fetchTop5Brand();
     initChart();
 });
 </script>
